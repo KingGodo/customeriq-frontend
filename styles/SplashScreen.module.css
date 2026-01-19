@@ -1,0 +1,74 @@
+.container {
+  height: 100vh;
+  width: 100%;
+  background: radial-gradient(
+    circle at top,
+    #fafafa 0%,
+    #f4f4f5 35%,
+    #e4e4e7 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.content {
+  text-align: center;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.brand {
+  font-size: 2.75rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.brandAccent {
+  color: #18181b;
+}
+
+.brandPrimary {
+  color: #7c3aed;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #52525b;
+  margin-bottom: 3rem;
+}
+
+.indicator {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  border-radius: 999px;
+  border: 1px solid #d4d4d8;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+/* Animations */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
