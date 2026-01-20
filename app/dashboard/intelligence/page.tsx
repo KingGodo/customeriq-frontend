@@ -12,6 +12,15 @@ import {
 } from 'lucide-react';
 
 import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+
+import {
   Card,
   CardContent,
   CardHeader,
@@ -28,6 +37,8 @@ import { Separator } from '@/components/ui/separator';
 /* -------------------------------------------------------------------------- */
 
 export default function IntelligencePage() {
+  /* ===================== DATA ===================== */
+
   const features = [
     { name: 'Transaction Fees', importance: 92 },
     { name: 'App Bugs / Issues', importance: 78 },
@@ -45,28 +56,22 @@ export default function IntelligencePage() {
 
   const trainingHistory = [
     {
-      date: '2024-01-18',
-      dataSize: '125,480 records',
-      accuracy: '94.2%',
-      status: 'Completed',
+      date: '2024-01-04',
+      accuracy: 93.1,
     },
     {
       date: '2024-01-11',
-      dataSize: '120,200 records',
-      accuracy: '93.8%',
-      status: 'Completed',
+      accuracy: 93.8,
     },
     {
-      date: '2024-01-04',
-      dataSize: '115,900 records',
-      accuracy: '93.1%',
-      status: 'Completed',
+      date: '2024-01-18',
+      accuracy: 94.2,
     },
   ];
 
   return (
     <div className="min-h-screen bg-white p-8 space-y-10">
-      {/* Header */}
+      {/* ===================== HEADER ===================== */}
       <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
@@ -92,7 +97,7 @@ export default function IntelligencePage() {
         </div>
       </header>
 
-      {/* Health Summary */}
+      {/* ===================== HEALTH SUMMARY ===================== */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <HealthCard title="Current Accuracy" value="94.2%" icon={ShieldCheck} />
         <HealthCard title="7-Day Drift" value="-0.8%" icon={TrendingDown} />
@@ -100,19 +105,32 @@ export default function IntelligencePage() {
         <HealthCard title="Model Status" value="Healthy" icon={Sparkles} badge />
       </section>
 
-      {/* Drift + Explainability */}
+      {/* ===================== DRIFT + EXPLAINABILITY ===================== */}
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        {/* ===== Drift Chart ===== */}
         <Card className="transition hover:shadow-lg">
           <CardHeader>
             <CardTitle>Model Drift Monitoring</CardTitle>
             <CardDescription>
-              Tracks accuracy decay and retraining events over time.
+              Accuracy trend across recent retraining cycles.
             </CardDescription>
           </CardHeader>
 
           <CardContent>
-            <div className="flex h-[260px] items-center justify-center rounded-xl border bg-slate-50 text-sm text-slate-500">
-              📈 Accuracy vs Time (Chart Placeholder)
+            <div className="h-[260px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trainingHistory}>
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[92, 95]} />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="accuracy"
+                    strokeWidth={3}
+                    dot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
 
             <Separator className="my-5" />
@@ -125,6 +143,7 @@ export default function IntelligencePage() {
           </CardContent>
         </Card>
 
+        {/* ===== Feature Importance ===== */}
         <Card className="transition hover:shadow-lg">
           <CardHeader>
             <CardTitle>Feature Importance</CardTitle>
@@ -151,7 +170,7 @@ export default function IntelligencePage() {
         </Card>
       </section>
 
-      {/* Performance Metrics */}
+      {/* ===================== PERFORMANCE METRICS ===================== */}
       <Card className="transition hover:shadow-lg">
         <CardHeader>
           <CardTitle>Model Performance Metrics</CardTitle>
@@ -173,48 +192,6 @@ export default function IntelligencePage() {
                 </p>
               </div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Training History */}
-      <Card className="transition hover:shadow-lg">
-        <CardHeader>
-          <CardTitle>Training History</CardTitle>
-          <CardDescription>
-            Audit trail of model retraining sessions.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <div className="overflow-x-auto rounded-xl border">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50">
-                <tr className="border-b">
-                  <th className="px-4 py-3 text-left font-medium">Date</th>
-                  <th className="px-4 py-3 text-left font-medium">Dataset Size</th>
-                  <th className="px-4 py-3 text-left font-medium">Accuracy</th>
-                  <th className="px-4 py-3 text-left font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trainingHistory.map((row) => (
-                  <tr
-                    key={row.date}
-                    className="border-b last:border-none hover:bg-slate-50"
-                  >
-                    <td className="px-4 py-3">{row.date}</td>
-                    <td className="px-4 py-3">{row.dataSize}</td>
-                    <td className="px-4 py-3 font-semibold text-indigo-600">
-                      {row.accuracy}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant="secondary">{row.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </CardContent>
       </Card>

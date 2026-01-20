@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Card,
   CardContent,
@@ -16,8 +18,21 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Plus } from 'lucide-react'
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts'
 
 export default function SourcesPage() {
+  /* =======================
+     SOURCES
+  ======================= */
   const sources = [
     {
       id: 1,
@@ -53,9 +68,21 @@ export default function SourcesPage() {
     },
   ]
 
+  /* =======================
+     INGESTION HEALTH DATA
+  ======================= */
+  const ingestionHealth = [
+    { time: '00:00', latency: 220, throughput: 38 },
+    { time: '01:00', latency: 210, throughput: 42 },
+    { time: '02:00', latency: 260, throughput: 34 },
+    { time: '03:00', latency: 240, throughput: 36 },
+    { time: '04:00', latency: 280, throughput: 31 },
+    { time: '05:00', latency: 230, throughput: 40 },
+  ]
+
   return (
     <section className="space-y-10">
-      {/* Header */}
+      {/* ===================== HEADER ===================== */}
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
@@ -72,27 +99,58 @@ export default function SourcesPage() {
         </Button>
       </header>
 
-      {/* Ingestion Health */}
+      {/* ===================== INGESTION HEALTH ===================== */}
       <Card className="border border-zinc-200/60">
         <CardHeader>
           <CardTitle className="text-base font-medium">
             Ingestion Health
           </CardTitle>
           <CardDescription>
-            Data latency and throughput overview
+            Data latency and throughput trends
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <div className="h-48 rounded-xl bg-zinc-50 flex items-center justify-center">
-            <span className="text-sm text-zinc-400">
-              Latency & throughput trends
-            </span>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Latency */}
+            <div className="h-48">
+              <p className="mb-2 text-sm font-medium text-zinc-600">
+                Latency (ms)
+              </p>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={ingestionHealth}>
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="latency"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Throughput */}
+            <div className="h-48">
+              <p className="mb-2 text-sm font-medium text-zinc-600">
+                Throughput (MB/min)
+              </p>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={ingestionHealth}>
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="throughput" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Sources Table */}
+      {/* ===================== SOURCES TABLE ===================== */}
       <Card className="border border-zinc-200/60">
         <CardHeader>
           <CardTitle className="text-base font-medium">

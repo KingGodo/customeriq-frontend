@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Card,
   CardContent,
@@ -12,8 +14,21 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from 'recharts'
 
 export default function DashboardPage() {
+  /* =======================
+     METRICS
+  ======================= */
   const metrics = [
     {
       label: 'Total Revenue',
@@ -45,6 +60,45 @@ export default function DashboardPage() {
     },
   ]
 
+  /* =======================
+     PERFORMANCE DATA
+  ======================= */
+  const revenueData = [
+    { day: 'Mon', revenue: 12000 },
+    { day: 'Tue', revenue: 14500 },
+    { day: 'Wed', revenue: 13800 },
+    { day: 'Thu', revenue: 16000 },
+    { day: 'Fri', revenue: 17200 },
+    { day: 'Sat', revenue: 16800 },
+    { day: 'Sun', revenue: 18500 },
+  ]
+
+  const activityData = [
+    { time: '00–06', users: 120 },
+    { time: '06–12', users: 420 },
+    { time: '12–18', users: 680 },
+    { time: '18–24', users: 530 },
+  ]
+
+  /* =======================
+     GEO DATA
+  ======================= */
+  const geoData = [
+    { region: 'Harare', customers: 3420 },
+    { region: 'Bulawayo', customers: 1840 },
+    { region: 'Gweru', customers: 960 },
+    { region: 'Mutare', customers: 740 },
+    { region: 'Masvingo', customers: 460 },
+  ]
+
+  const totalCustomers = geoData.reduce(
+    (sum, r) => sum + r.customers,
+    0
+  )
+
+  /* =======================
+     ALERTS
+  ======================= */
   const alerts = [
     {
       priority: 'High',
@@ -75,7 +129,7 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-10">
-      {/* Header */}
+      {/* ===================== HEADER ===================== */}
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
           Executive Overview
@@ -85,11 +139,10 @@ export default function DashboardPage() {
         </p>
       </header>
 
-      {/* Metrics */}
+      {/* ===================== METRICS ===================== */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric, index) => {
           const Icon = metric.icon
-
           return (
             <Card
               key={index}
@@ -100,9 +153,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-zinc-500">
                     {metric.label}
                   </span>
-                  <Icon
-                    className={`h-5 w-5 ${metric.tone}`}
-                  />
+                  <Icon className={`h-5 w-5 ${metric.tone}`} />
                 </div>
 
                 <div className="space-y-1">
@@ -119,26 +170,38 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* Analytics */}
+      {/* ===================== ANALYTICS ===================== */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Revenue Velocity */}
         <Card className="border border-zinc-200/60">
           <CardHeader>
             <CardTitle className="text-base font-medium">
               Revenue Velocity
             </CardTitle>
             <CardDescription>
-              30-day performance trend
+              7-day performance trend
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-64 rounded-xl bg-zinc-50 flex items-center justify-center">
-              <span className="text-sm text-zinc-400">
-                Revenue trend visualization
-              </span>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData}>
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
+        {/* Activity Distribution */}
         <Card className="border border-zinc-200/60">
           <CardHeader>
             <CardTitle className="text-base font-medium">
@@ -149,16 +212,61 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-64 rounded-xl bg-zinc-50 flex items-center justify-center">
-              <span className="text-sm text-zinc-400">
-                Engagement heatmap
-              </span>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={activityData}>
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="users" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Alerts */}
+      {/* ===================== CUSTOMER GEOGRAPHIC DISTRIBUTION ===================== */}
+      <Card className="border border-zinc-200/60">
+        <CardHeader>
+          <CardTitle className="text-base font-medium">
+            Customer Geographic Distribution
+          </CardTitle>
+          <CardDescription>
+            Active customers by region
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          {geoData.map((region, index) => {
+            const percentage = Math.round(
+              (region.customers / totalCustomers) * 100
+            )
+
+            return (
+              <div key={index} className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-zinc-700">
+                    {region.region}
+                  </span>
+                  <span className="text-zinc-500">
+                    {region.customers.toLocaleString()} ({percentage}%)
+                  </span>
+                </div>
+
+                <div className="h-2 w-full rounded-full bg-zinc-100 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-zinc-900 transition-all"
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </CardContent>
+      </Card>
+
+      {/* ===================== ALERTS ===================== */}
       <Card className="border border-zinc-200/60">
         <CardHeader>
           <CardTitle className="text-base font-medium">

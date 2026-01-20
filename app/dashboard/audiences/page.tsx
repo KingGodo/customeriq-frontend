@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Card,
   CardContent,
@@ -15,6 +17,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Folder } from 'lucide-react'
+
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from 'recharts'
 
 export default function AudiencesPage() {
   const segments = [
@@ -53,6 +65,37 @@ export default function AudiencesPage() {
     'Behavior',
     'Risk Profile',
     'Custom Segments',
+  ]
+
+  /**
+   * Fake overlap dataset (demo data)
+   * Represents how much each segment overlaps with others.
+   */
+  const overlapData = [
+    {
+      segment: 'Civil Servants',
+      VIPs: 120,
+      YoungProfessionals: 340,
+      SmallBusiness: 210,
+    },
+    {
+      segment: 'VIPs',
+      CivilServants: 90,
+      YoungProfessionals: 140,
+      SmallBusiness: 110,
+    },
+    {
+      segment: 'Young Pros',
+      CivilServants: 260,
+      VIPs: 160,
+      SmallBusiness: 300,
+    },
+    {
+      segment: 'Small Business',
+      CivilServants: 190,
+      VIPs: 80,
+      YoungProfessionals: 240,
+    },
   ]
 
   return (
@@ -159,19 +202,27 @@ export default function AudiencesPage() {
       <Card className="border border-zinc-200/60">
         <CardHeader>
           <CardTitle className="text-base font-medium">
-            Segment Overlap
+            Segment Overlap Analysis
           </CardTitle>
           <CardDescription>
-            Shared membership across segments
+            Visualizing shared customers across segments
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
-          <div className="h-64 rounded-xl bg-zinc-50 flex items-center justify-center">
-            <span className="text-sm text-zinc-400">
-              Segment intersection analysis
-            </span>
-          </div>
+        <CardContent className="h-[320px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={overlapData}>
+              <XAxis dataKey="segment" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+
+              <Bar dataKey="VIPs" stackId="a" />
+              <Bar dataKey="YoungProfessionals" stackId="a" />
+              <Bar dataKey="SmallBusiness" stackId="a" />
+              <Bar dataKey="CivilServants" stackId="a" />
+            </BarChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
     </section>
